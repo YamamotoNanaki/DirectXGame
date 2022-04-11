@@ -37,6 +37,8 @@ void GameScene::Initialize() {
 		worldTransform_[i].Initialize();
 	}
 
+	viewProjection_.nearZ = 52.0f;
+	viewProjection_.farZ = 53.0f;
 
 	viewProjection_.Initialize();
 	/*soundDataHandle_ = audio_->LoadWave("se_sad03.wav");
@@ -54,10 +56,11 @@ void GameScene::Update()
 
 	sprite_->SetPosition(position);
 
-#pragma region 視点移動
 	XMFLOAT3 move = { 0,0,0 };
 
-	const float kEyeSpeed = 0.2f;
+#pragma region 視点移動
+
+	/*const float kEyeSpeed = 0.2f;
 
 	if (input_->PushKey(DIK_W))	move = { 0,0,+kEyeSpeed };
 	if (input_->PushKey(DIK_S))	move = { 0,0,-kEyeSpeed };
@@ -69,7 +72,7 @@ void GameScene::Update()
 	viewProjection_.UpdateMatrix();
 
 	debugText_->SetPos(50, 50);
-	debugText_->Printf("eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+	debugText_->Printf("eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);*/
 
 #pragma endregion 視点移動
 
@@ -108,6 +111,39 @@ void GameScene::Update()
 	debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 
 #pragma endregion 上方向回転処理
+
+#pragma region fov変更処理
+
+	if (input_->PushKey(DIK_W))
+	{
+		viewProjection_.fovAngleY += 0.01f;
+		viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
+	}
+	if (input_->PushKey(DIK_S))
+	{
+		viewProjection_.fovAngleY -= 0.01f;
+		viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.1f);
+	}
+	viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
+
+	viewProjection_.UpdateMatrix();
+
+	debugText_->SetPos(50, 110);
+	debugText_->Printf("fovAngleY(Degree):(%f,%f,%f)", XMConvertToDegrees(viewProjection_.fovAngleY));
+
+#pragma endregion fov変更処理
+
+#pragma region クリップ距離変更処理
+
+	if (input_->PushKey(DIK_UP)) viewProjection_.nearZ += 0.1f;
+	if (input_->PushKey(DIK_DOWN))viewProjection_.nearZ -= 0.1f;
+
+	viewProjection_.UpdateMatrix();
+
+	debugText_->SetPos(50, 130);
+	debugText_->Printf("nearZ:(%f,%f,%f)", viewProjection_.nearZ);
+
+#pragma endregion クリップ距離変更処理
 
 
 	/*if (input_->TriggerKey(DIK_SPACE))
