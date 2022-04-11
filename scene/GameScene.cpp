@@ -22,11 +22,16 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
+
+	worldTransform_.scale_ = { 5.0f,5.0f,5.0f };
+	worldTransform_.rotation_ = { XM_PI / 4.0f,XM_PI / 4.0f,0.0f };
+	worldTransform_.translation_ = { 10.0f,10.0f,10.0f };
+
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
-	soundDataHandle_ = audio_->LoadWave("se_sad03.wav");
+	/*soundDataHandle_ = audio_->LoadWave("se_sad03.wav");
 	audio_->PlayWave(soundDataHandle_);
-	voiceHandle_ = audio_->PlayWave(soundDataHandle_, true);
+	voiceHandle_ = audio_->PlayWave(soundDataHandle_, true);*/
 }
 
 void GameScene::Update() 
@@ -39,15 +44,22 @@ void GameScene::Update()
 
 	sprite_->SetPosition(position);
 
-	if (input_->TriggerKey(DIK_SPACE))
+	/*if (input_->TriggerKey(DIK_SPACE))
 	{
 		audio_->StopWave(voiceHandle_);
-	}
+	}*/
 
-	value_++;
-	string strDebug = string("value:") + to_string(value_);
-
+	//value_++;
+	string strDebug = string("scale:") + to_string(worldTransform_.scale_.x) + string(",")
+		+ to_string(worldTransform_.scale_.y) + string(",") + to_string(worldTransform_.scale_.z);
 	debugText_->Print(strDebug, 50, 50, 1.0f);
+	strDebug = string("rotation:") + to_string(worldTransform_.rotation_.x) + string(",")
+		+ to_string(worldTransform_.rotation_.y) + string(",") + to_string(worldTransform_.rotation_.z);
+	debugText_->Print(strDebug, 50, 70, 1.0f);
+	strDebug = string("translation:") + to_string(worldTransform_.translation_.x) + string(",")
+		+ to_string(worldTransform_.translation_.y) + string(",") + to_string(worldTransform_.translation_.z);
+	debugText_->Print(strDebug, 50, 90, 1.0f);
+
 }
 
 void GameScene::Draw() {
@@ -62,7 +74,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	sprite_->Draw();
+	//sprite_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
