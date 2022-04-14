@@ -123,6 +123,7 @@ void GameScene::Update()
 	{
 		viewProjection_.fovAngleY -= 0.01f;
 		viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.1f);
+
 	}
 	viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
 
