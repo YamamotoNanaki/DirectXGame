@@ -24,6 +24,7 @@ void GameScene::Initialize() {
 	sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
+
 	random_device seed_gen;
 	mt19937_64 engine(seed_gen());
 	uniform_real_distribution<float>rotDist(0.0f, XM_2PI);
