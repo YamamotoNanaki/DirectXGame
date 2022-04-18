@@ -29,8 +29,9 @@ void GameScene::Initialize() {
 	uniform_real_distribution<float>rotDist(0.0f, XM_2PI);
 	uniform_real_distribution<float>posDist(-10.0f, 10.0f);
 
-	worldTransform_[1].translation_ = { 0,4.5f,0 };
+	worldTransform_[1].translation_ = { 0,0,-10 };
 	worldTransform_[1].parent_ = &worldTransform_[0];
+	worldTransform_[1].scale_ = { 0.5,0.5,0.5 };
 	for (int i = 2; i < _countof(worldTransform_); i++)
 	{
 		worldTransform_[i].translation_ = { 0,-4.5,-15.0f * i + 180 };
@@ -41,11 +42,14 @@ void GameScene::Initialize() {
 		worldTransform_[i].Initialize();
 	}
 
+	viewProjection_.eye.y = 20;
+
 	viewProjection_.Initialize();
 }
 
 void GameScene::Update() 
 {
+	XMFLOAT3 front = { 0,0,0 };
 	XMFLOAT3 move = { 0,0,0 };
 	float rota = 0;
 
@@ -62,30 +66,36 @@ void GameScene::Update()
 	{
 		rota -= kRotaSpeed;
 	}
+	worldTransform_[PartId::Root].rotation_.y += rota;
+
+	front = { sinf(worldTransform_[PartId::Root].rotation_.y),
+		0, cosf(worldTransform_[PartId::Root].rotation_.y) };
+
 	if (input_->PushKey(DIK_UP))
 	{
-		move = { sinf(worldTransform_[PartId::Root].rotation_.y) * -kCharacterSpeed,0,
-			cosf(worldTransform_[PartId::Root].rotation_.y) * -kCharacterSpeed };
+		move = { front.x * -kCharacterSpeed, 0, front.z * -kCharacterSpeed };
 	}
 	if (input_->PushKey(DIK_DOWN))
 	{
-		move = { sinf(worldTransform_[PartId::Root].rotation_.y) * kCharacterSpeed,0,
-			cosf(worldTransform_[PartId::Root].rotation_.y) * kCharacterSpeed };
+		move = { front.x * kCharacterSpeed, 0, front.z * kCharacterSpeed };
 	}
 
 	worldTransform_[PartId::Root].translation_.x += move.x;
 	worldTransform_[PartId::Root].translation_.y += move.y;
 	worldTransform_[PartId::Root].translation_.z += move.z;
-	worldTransform_[PartId::Root].rotation_.y += rota;
 
 	for (int i = 0; i < _countof(worldTransform_); i++)
 	{
 		worldTransform_[i].UpdateMatrix();
 	}
 
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("front(x:%f,y:%f,z:%f)", front.x, front.y, front.z);
+
+
 	viewProjection_.target = worldTransform_[PartId::Root].translation_;
-	viewProjection_.eye.x = worldTransform_[PartId::Root].translation_.x + sinf(worldTransform_[PartId::Root].rotation_.y) * 20;
-	viewProjection_.eye.z = worldTransform_[PartId::Root].translation_.z + cosf(worldTransform_[PartId::Root].rotation_.y) * 20;
+	viewProjection_.eye.x = worldTransform_[PartId::Root].translation_.x + front.x * 20;
+	viewProjection_.eye.z = worldTransform_[PartId::Root].translation_.z + front.z * 20;
 
 	viewProjection_.UpdateMatrix();
 
