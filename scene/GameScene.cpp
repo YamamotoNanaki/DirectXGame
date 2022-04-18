@@ -29,16 +29,14 @@ void GameScene::Initialize() {
 	uniform_real_distribution<float>rotDist(0.0f, XM_2PI);
 	uniform_real_distribution<float>posDist(-10.0f, 10.0f);
 
-	for (size_t i = 0; i < _countof(worldTransform_); i++)
-	{
-		worldTransform_[i].scale_ = { 1,1,1 };
-		worldTransform_[i].rotation_ = { rotDist(engine),rotDist(engine),rotDist(engine) };
-		worldTransform_[i].translation_ = { posDist(engine),posDist(engine),posDist(engine) };
-		worldTransform_[i].Initialize();
-	}
+	worldTransform_[0].Initialize();
 
-	viewProjection_.nearZ = 52.0f;
-	viewProjection_.farZ = 53.0f;
+	worldTransform_[1].translation_ = { 0,4.5f,0 };
+	worldTransform_[1].parent_ = &worldTransform_[0];
+	worldTransform_[1].Initialize();
+
+	/*viewProjection_.nearZ = 52.0f;
+	viewProjection_.farZ = 53.0f;*/
 
 	viewProjection_.Initialize();
 	/*soundDataHandle_ = audio_->LoadWave("se_sad03.wav");
@@ -78,72 +76,97 @@ void GameScene::Update()
 
 #pragma region 注視点移動
 
-	const float kTargetSpeed = 0.2f;
+	//const float kTargetSpeed = 0.2f;
 
-	if (input_->PushKey(DIK_RIGHT))	move = { +kTargetSpeed,0,0 };
-	if (input_->PushKey(DIK_LEFT))	move = { -kTargetSpeed,0,0 };
+	//if (input_->PushKey(DIK_RIGHT))	move = { +kTargetSpeed,0,0 };
+	//if (input_->PushKey(DIK_LEFT))	move = { -kTargetSpeed,0,0 };
 
-	viewProjection_.target.x += move.x;
-	viewProjection_.target.y += move.y;
-	viewProjection_.target.z += move.z;
+	//viewProjection_.target.x += move.x;
+	//viewProjection_.target.y += move.y;
+	//viewProjection_.target.z += move.z;
 
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.UpdateMatrix();
 
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
+	//debugText_->SetPos(50, 70);
+	//debugText_->Printf("target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
 
 #pragma endregion 注視点移動
 
 #pragma region 上方向回転処理
 
-	const float kUpRotSpeed = 0.05f;
+	//const float kUpRotSpeed = 0.05f;
 
-	if (input_->PushKey(DIK_SPACE))
-	{
-		viewAngle += kUpRotSpeed;
-		viewAngle = fmodf(viewAngle, XM_2PI);
-	}
-	viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
+	//if (input_->PushKey(DIK_SPACE))
+	//{
+	//	viewAngle += kUpRotSpeed;
+	//	viewAngle = fmodf(viewAngle, XM_2PI);
+	//}
+	//viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
 
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.UpdateMatrix();
 
-	debugText_->SetPos(50, 90);
-	debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
+	//debugText_->SetPos(50, 90);
+	//debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 
 #pragma endregion 上方向回転処理
 
 #pragma region fov変更処理
 
-	if (input_->PushKey(DIK_W))
-	{
-		viewProjection_.fovAngleY += 0.01f;
-		viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
-	}
-	if (input_->PushKey(DIK_S))
-	{
-		viewProjection_.fovAngleY -= 0.01f;
-		viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.1f);
-	}
-	viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
+	//if (input_->PushKey(DIK_W))
+	//{
+	//	viewProjection_.fovAngleY += 0.01f;
+	//	viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
+	//}
+	//if (input_->PushKey(DIK_S))
+	//{
+	//	viewProjection_.fovAngleY -= 0.01f;
+	//	viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.1f);
+	//}
+	//viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
 
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.UpdateMatrix();
 
-	debugText_->SetPos(50, 110);
-	debugText_->Printf("fovAngleY(Degree):(%f,%f,%f)", XMConvertToDegrees(viewProjection_.fovAngleY));
+	//debugText_->SetPos(50, 110);
+	//debugText_->Printf("fovAngleY(Degree):(%f,%f,%f)", XMConvertToDegrees(viewProjection_.fovAngleY));
 
 #pragma endregion fov変更処理
 
 #pragma region クリップ距離変更処理
 
-	if (input_->PushKey(DIK_UP)) viewProjection_.nearZ += 0.1f;
-	if (input_->PushKey(DIK_DOWN))viewProjection_.nearZ -= 0.1f;
+	//if (input_->PushKey(DIK_UP)) viewProjection_.nearZ += 0.1f;
+	//if (input_->PushKey(DIK_DOWN))viewProjection_.nearZ -= 0.1f;
 
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.UpdateMatrix();
 
-	debugText_->SetPos(50, 130);
-	debugText_->Printf("nearZ:(%f,%f,%f)", viewProjection_.nearZ);
+	//debugText_->SetPos(50, 130);
+	//debugText_->Printf("nearZ:(%f,%f,%f)", viewProjection_.nearZ);
 
 #pragma endregion クリップ距離変更処理
+
+#pragma region キャラクター移動処理
+
+	const float kCharacterSpeed = 0.2f;
+
+	if (input_->PushKey(DIK_LEFT))
+	{
+		move = { -kCharacterSpeed,0,0 };
+	}
+	if (input_->PushKey(DIK_RIGHT))
+	{
+		move = { kCharacterSpeed,0,0 };
+	}
+
+	worldTransform_[PartId::Root].translation_.x += move.x;
+	worldTransform_[PartId::Root].translation_.y += move.y;
+	worldTransform_[PartId::Root].translation_.z += move.z;
+
+	debugText_->SetPos(50, 150);
+	debugText_->Printf("Root:(%f,%f,%f)", worldTransform_[PartId::Root].translation_.x,
+		worldTransform_[PartId::Root].translation_.y, worldTransform_[PartId::Root].translation_.z);
+
+	worldTransform_[0].UpdateMatrix();
+	worldTransform_[1].UpdateMatrix();
+#pragma endregion キャラクター移動処理
 
 
 	/*if (input_->TriggerKey(DIK_SPACE))

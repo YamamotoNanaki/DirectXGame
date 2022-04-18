@@ -96,14 +96,14 @@
     <ClCompile Include="base\TextureManager.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="scene\GameScene.cpp">
-      <Filter>ソース ファイル\scene</Filter>
-    </ClCompile>
     <ClCompile Include="input\Input.cpp">
       <Filter>ソース ファイル\input</Filter>
     </ClCompile>
     <ClCompile Include="AxisIndicator.cpp">
       <Filter>ソース ファイル\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\GameScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
