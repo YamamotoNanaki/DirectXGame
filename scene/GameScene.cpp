@@ -56,11 +56,11 @@ void GameScene::Update()
 
 	if (input_->PushKey(DIK_RIGHT))
 	{
-		rota -= kRotaSpeed;
+		rota += kRotaSpeed;
 	}
 	if (input_->PushKey(DIK_LEFT))
 	{
-		rota += kRotaSpeed;
+		rota -= kRotaSpeed;
 	}
 	if (input_->PushKey(DIK_UP))
 	{
