@@ -11,6 +11,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() 
 {
 	delete model_;
+	delete sprite_;
 }
 
 void GameScene::Initialize() {
@@ -20,6 +21,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 	textureHandle_ = TextureManager::Load("mario.jpg");
+	sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
 	random_device seed_gen;
@@ -27,11 +29,17 @@ void GameScene::Initialize() {
 	uniform_real_distribution<float>rotDist(0.0f, XM_2PI);
 	uniform_real_distribution<float>posDist(-10.0f, 10.0f);
 
-	worldTransform_[0].Initialize();
-
 	worldTransform_[1].translation_ = { 0,4.5f,0 };
 	worldTransform_[1].parent_ = &worldTransform_[0];
-	worldTransform_[1].Initialize();
+	for (int i = 2; i < _countof(worldTransform_); i++)
+	{
+		worldTransform_[i].translation_ = { 0,-4.5,-15.0f * i + 180 };
+	}
+
+	for (int i = 0; i < _countof(worldTransform_); i++)
+	{
+		worldTransform_[i].Initialize();
+	}
 
 	viewProjection_.Initialize();
 }
@@ -74,6 +82,12 @@ void GameScene::Update()
 	{
 		worldTransform_[i].UpdateMatrix();
 	}
+
+	viewProjection_.target = worldTransform_[PartId::Root].translation_;
+	viewProjection_.eye.x = worldTransform_[PartId::Root].translation_.x + sinf(worldTransform_[PartId::Root].rotation_.y) * 20;
+	viewProjection_.eye.z = worldTransform_[PartId::Root].translation_.z + cosf(worldTransform_[PartId::Root].rotation_.y) * 20;
+
+	viewProjection_.UpdateMatrix();
 
 #pragma endregion キャラクター移動処理
 
