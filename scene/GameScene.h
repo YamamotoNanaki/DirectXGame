@@ -48,7 +48,6 @@ class GameScene {
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 	uint32_t textureHandle_ = 0;
-	Sprite* sprite_ = nullptr;
 	Model* model_ = nullptr;
 	WorldTransform worldTransform_[2];
 	ViewProjection viewProjection_;

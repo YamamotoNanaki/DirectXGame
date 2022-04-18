@@ -10,7 +10,6 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() 
 {
-	delete sprite_;
 	delete model_;
 }
 
@@ -21,7 +20,6 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 	textureHandle_ = TextureManager::Load("mario.jpg");
-	sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
 	random_device seed_gen;
@@ -35,155 +33,49 @@ void GameScene::Initialize() {
 	worldTransform_[1].parent_ = &worldTransform_[0];
 	worldTransform_[1].Initialize();
 
-	/*viewProjection_.nearZ = 52.0f;
-	viewProjection_.farZ = 53.0f;*/
-
 	viewProjection_.Initialize();
-	/*soundDataHandle_ = audio_->LoadWave("se_sad03.wav");
-	audio_->PlayWave(soundDataHandle_);
-	voiceHandle_ = audio_->PlayWave(soundDataHandle_, true);*/
 }
 
 void GameScene::Update() 
 {
-	//スプライトの今の座標を取得
-	XMFLOAT2 position = sprite_->GetPosition();
-	//座標
-	position.x += 2.0f;
-	position.y += 1.0f;
-
-	sprite_->SetPosition(position);
-
 	XMFLOAT3 move = { 0,0,0 };
-
-#pragma region 視点移動
-
-	/*const float kEyeSpeed = 0.2f;
-
-	if (input_->PushKey(DIK_W))	move = { 0,0,+kEyeSpeed };
-	if (input_->PushKey(DIK_S))	move = { 0,0,-kEyeSpeed };
-
-	viewProjection_.eye.x += move.x;
-	viewProjection_.eye.y += move.y;
-	viewProjection_.eye.z += move.z;
-
-	viewProjection_.UpdateMatrix();
-
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);*/
-
-#pragma endregion 視点移動
-
-#pragma region 注視点移動
-
-	//const float kTargetSpeed = 0.2f;
-
-	//if (input_->PushKey(DIK_RIGHT))	move = { +kTargetSpeed,0,0 };
-	//if (input_->PushKey(DIK_LEFT))	move = { -kTargetSpeed,0,0 };
-
-	//viewProjection_.target.x += move.x;
-	//viewProjection_.target.y += move.y;
-	//viewProjection_.target.z += move.z;
-
-	//viewProjection_.UpdateMatrix();
-
-	//debugText_->SetPos(50, 70);
-	//debugText_->Printf("target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
-
-#pragma endregion 注視点移動
-
-#pragma region 上方向回転処理
-
-	//const float kUpRotSpeed = 0.05f;
-
-	//if (input_->PushKey(DIK_SPACE))
-	//{
-	//	viewAngle += kUpRotSpeed;
-	//	viewAngle = fmodf(viewAngle, XM_2PI);
-	//}
-	//viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
-
-	//viewProjection_.UpdateMatrix();
-
-	//debugText_->SetPos(50, 90);
-	//debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
-
-#pragma endregion 上方向回転処理
-
-#pragma region fov変更処理
-
-	//if (input_->PushKey(DIK_W))
-	//{
-	//	viewProjection_.fovAngleY += 0.01f;
-	//	viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
-	//}
-	//if (input_->PushKey(DIK_S))
-	//{
-	//	viewProjection_.fovAngleY -= 0.01f;
-	//	viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.1f);
-	//}
-	//viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
-
-	//viewProjection_.UpdateMatrix();
-
-	//debugText_->SetPos(50, 110);
-	//debugText_->Printf("fovAngleY(Degree):(%f,%f,%f)", XMConvertToDegrees(viewProjection_.fovAngleY));
-
-#pragma endregion fov変更処理
-
-#pragma region クリップ距離変更処理
-
-	//if (input_->PushKey(DIK_UP)) viewProjection_.nearZ += 0.1f;
-	//if (input_->PushKey(DIK_DOWN))viewProjection_.nearZ -= 0.1f;
-
-	//viewProjection_.UpdateMatrix();
-
-	//debugText_->SetPos(50, 130);
-	//debugText_->Printf("nearZ:(%f,%f,%f)", viewProjection_.nearZ);
-
-#pragma endregion クリップ距離変更処理
+	float rota = 0;
 
 #pragma region キャラクター移動処理
 
 	const float kCharacterSpeed = 0.2f;
+	const float kRotaSpeed = 0.01;
 
-	if (input_->PushKey(DIK_LEFT))
-	{
-		move = { -kCharacterSpeed,0,0 };
-	}
 	if (input_->PushKey(DIK_RIGHT))
 	{
-		move = { kCharacterSpeed,0,0 };
+		rota -= kRotaSpeed;
+	}
+	if (input_->PushKey(DIK_LEFT))
+	{
+		rota += kRotaSpeed;
+	}
+	if (input_->PushKey(DIK_UP))
+	{
+		move = { sinf(worldTransform_[PartId::Root].rotation_.y) * -kCharacterSpeed,0,
+			cosf(worldTransform_[PartId::Root].rotation_.y) * -kCharacterSpeed };
+	}
+	if (input_->PushKey(DIK_DOWN))
+	{
+		move = { sinf(worldTransform_[PartId::Root].rotation_.y) * kCharacterSpeed,0,
+			cosf(worldTransform_[PartId::Root].rotation_.y) * kCharacterSpeed };
 	}
 
 	worldTransform_[PartId::Root].translation_.x += move.x;
 	worldTransform_[PartId::Root].translation_.y += move.y;
 	worldTransform_[PartId::Root].translation_.z += move.z;
+	worldTransform_[PartId::Root].rotation_.y += rota;
 
-	debugText_->SetPos(50, 150);
-	debugText_->Printf("Root:(%f,%f,%f)", worldTransform_[PartId::Root].translation_.x,
-		worldTransform_[PartId::Root].translation_.y, worldTransform_[PartId::Root].translation_.z);
-
-	worldTransform_[0].UpdateMatrix();
-	worldTransform_[1].UpdateMatrix();
-#pragma endregion キャラクター移動処理
-
-
-	/*if (input_->TriggerKey(DIK_SPACE))
+	for (int i = 0; i < _countof(worldTransform_); i++)
 	{
-		audio_->StopWave(voiceHandle_);
-	}*/
+		worldTransform_[i].UpdateMatrix();
+	}
 
-	//value_++;
-	/*string strDebug = string("scale:") + to_string(worldTransform_.scale_.x) + string(",")
-		+ to_string(worldTransform_.scale_.y) + string(",") + to_string(worldTransform_.scale_.z);
-	debugText_->Print(strDebug, 50, 50, 1.0f);
-	strDebug = string("rotation:") + to_string(worldTransform_.rotation_.x) + string(",")
-		+ to_string(worldTransform_.rotation_.y) + string(",") + to_string(worldTransform_.rotation_.z);
-	debugText_->Print(strDebug, 50, 70, 1.0f);
-	strDebug = string("translation:") + to_string(worldTransform_.translation_.x) + string(",")
-		+ to_string(worldTransform_.translation_.y) + string(",") + to_string(worldTransform_.translation_.z);
-	debugText_->Print(strDebug, 50, 90, 1.0f);*/
+#pragma endregion キャラクター移動処理
 
 }
 
@@ -199,7 +91,6 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	//sprite_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
