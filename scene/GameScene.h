@@ -10,6 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DirectXMath.h>
+#include "Ballet.h"
 
 /// <summary>
 /// ゲームシーン
@@ -56,6 +57,8 @@ class GameScene {
 	uint32_t voiceHandle_ = 0;
 	int32_t value_ = 0;
 	float viewAngle = 0.0f;
+
+	Ballet bal[10];
 
 public:
 	enum PartId

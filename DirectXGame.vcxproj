@@ -109,6 +109,7 @@
     <ClCompile Include="3d\WorldTransform.cpp" />
     <ClCompile Include="audio\Audio.cpp" />
     <ClCompile Include="AxisIndicator.cpp" />
+    <ClCompile Include="Ballet.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="3d\WorldTransform.h" />
     <ClInclude Include="audio\Audio.h" />
     <ClInclude Include="AxisIndicator.h" />
+    <ClInclude Include="Ballet.h" />
     <ClInclude Include="base\DirectXCommon.h" />
     <ClInclude Include="base\SafeDelete.h" />
     <ClInclude Include="base\TextureManager.h" />

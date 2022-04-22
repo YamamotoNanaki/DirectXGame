@@ -6,6 +6,7 @@
 using namespace DirectX;
 using namespace std;
 
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() 
@@ -42,9 +43,10 @@ void GameScene::Initialize() {
 		worldTransform_[i].Initialize();
 	}
 
-	viewProjection_.eye.y = 20;
+	viewProjection_.eye.y = 15;
 
 	viewProjection_.Initialize();
+
 }
 
 void GameScene::Update() 
@@ -71,6 +73,9 @@ void GameScene::Update()
 	front = { sinf(worldTransform_[PartId::Root].rotation_.y),
 		0, cosf(worldTransform_[PartId::Root].rotation_.y) };
 
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("front(x:%f,y:%f,z:%f)", front.x, front.y, front.z);
+
 	if (input_->PushKey(DIK_UP))
 	{
 		move = { front.x * -kCharacterSpeed, 0, front.z * -kCharacterSpeed };
@@ -89,9 +94,9 @@ void GameScene::Update()
 		worldTransform_[i].UpdateMatrix();
 	}
 
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("front(x:%f,y:%f,z:%f)", front.x, front.y, front.z);
+#pragma endregion キャラクター移動処理
 
+#pragma region 追従カメラ
 
 	viewProjection_.target = worldTransform_[PartId::Root].translation_;
 	viewProjection_.eye.x = worldTransform_[PartId::Root].translation_.x + front.x * 20;
@@ -99,8 +104,31 @@ void GameScene::Update()
 
 	viewProjection_.UpdateMatrix();
 
-#pragma endregion キャラクター移動処理
+#pragma endregion 追従カメラ
 
+	int balNum = 0;
+	for (int i = 0; i < _countof(bal); i++)
+	{
+		bool j = bal[i].GetFlag();
+		balNum += j == true;
+		if (j == false)break;
+	}
+
+	if (input_->TriggerKey(DIK_SPACE) && balNum < _countof(bal))
+	{
+		bal[balNum].Create(worldTransform_[0].translation_, front);
+	}
+
+	for (int i = 0; i < _countof(bal); i++)
+	{
+		bal[i].Update();
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		debugText_->SetPos(50, 70 + i * 20);
+		debugText_->Printf("flag:%d", bal[i].GetFlag());
+	}
 }
 
 void GameScene::Draw() {
@@ -132,6 +160,10 @@ void GameScene::Draw() {
 	for (size_t i = 0; i < _countof(worldTransform_); i++)
 	{
 		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
+	}
+	for (int i = 0; i < _countof(bal); i++)
+	{
+		bal[i].Draw(viewProjection_, textureHandle_);
 	}
 
 	// 3Dオブジェクト描画後処理
