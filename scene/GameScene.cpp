@@ -30,7 +30,7 @@ void GameScene::Initialize() {
 	uniform_real_distribution<float>rotDist(0.0f, XM_2PI);
 	uniform_real_distribution<float>posDist(-10.0f, 10.0f);
 
-	worldTransform_[PartId::Root].Initialize();
+	/*worldTransform_[PartId::Root].Initialize();
 
 	worldTransform_[PartId::Spine].translation_ = { 0,4.5,0 };
 	worldTransform_[PartId::Spine].parent_ = &worldTransform_[PartId::Root];
@@ -62,15 +62,23 @@ void GameScene::Initialize() {
 
 	worldTransform_[PartId::LegR].translation_ = { 4.5,-4.5,0 };
 	worldTransform_[PartId::LegR].parent_ = &worldTransform_[PartId::Hip];
-	worldTransform_[PartId::LegR].Initialize();
+	worldTransform_[PartId::LegR].Initialize();*/
 
-	/*for (size_t i = 0; i < _countof(worldTransform_); i++)
+	for (size_t i = 0; i < _countof(worldTransform_); i++)
 	{
-		worldTransform_[i].scale_ = { 1,1,1 };
-		worldTransform_[i].rotation_ = { rotDist(engine),rotDist(engine),rotDist(engine) };
-		worldTransform_[i].translation_ = { posDist(engine),posDist(engine),posDist(engine) };
+		worldTransform_[i].scale_ = { 5,5,5 };
+
+		if (i % 2 == 0)
+		{
+			worldTransform_[i].translation_ = { (float)(i / 2) * worldTransform_[0].scale_.x * 2 - 40,15.0f,0.0f };
+		}
+		else
+		{
+			worldTransform_[i].translation_ =
+			{ (float)(i / 2) * worldTransform_[0].scale_.x * 2 - 40,-15.0f,0.0f };
+		}
 		worldTransform_[i].Initialize();
-	}*/
+	}
 
 	/*viewProjection_.nearZ = 52.0f;
 	viewProjection_.farZ = 53.0f;*/
@@ -113,43 +121,43 @@ void GameScene::Update()
 
 #pragma region キャラクター移動
 
-	const float kTargetSpeed = 0.2f;
+	//const float kTargetSpeed = 0.2f;
 
-	if (input_->PushKey(DIK_RIGHT))	move = { +kTargetSpeed,0,0 };
-	if (input_->PushKey(DIK_LEFT))	move = { -kTargetSpeed,0,0 };
+	//if (input_->PushKey(DIK_RIGHT))	move = { +kTargetSpeed,0,0 };
+	//if (input_->PushKey(DIK_LEFT))	move = { -kTargetSpeed,0,0 };
 
-	worldTransform_[PartId::Root].translation_.x += move.x;
-	worldTransform_[PartId::Root].translation_.y += move.y;
-	worldTransform_[PartId::Root].translation_.z += move.z;
+	//worldTransform_[PartId::Root].translation_.x += move.x;
+	//worldTransform_[PartId::Root].translation_.y += move.y;
+	//worldTransform_[PartId::Root].translation_.z += move.z;
 
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.UpdateMatrix();
 
-	debugText_->SetPos(50, 150);
-	debugText_->Printf("target:(%f,%f,%f)", worldTransform_[PartId::Root].translation_.x,
-		worldTransform_[PartId::Root].translation_.y, worldTransform_[PartId::Root].translation_.z);
+	//debugText_->SetPos(50, 150);
+	//debugText_->Printf("target:(%f,%f,%f)", worldTransform_[PartId::Root].translation_.x,
+	//	worldTransform_[PartId::Root].translation_.y, worldTransform_[PartId::Root].translation_.z);
 
-	for (int i = 0; i < _countof(worldTransform_); i++)
-	{
-		worldTransform_[i].UpdateMatrix();
-	}
+	//for (int i = 0; i < _countof(worldTransform_); i++)
+	//{
+	//	worldTransform_[i].UpdateMatrix();
+	//}
 
 #pragma endregion キャラクター移動
 
 #pragma region 上半身回転
 
-	const float kChestRotaSpeed = 0.05f;
+	//const float kChestRotaSpeed = 0.05f;
 
-	if (input_->PushKey(DIK_U))worldTransform_[PartId::Chest].rotation_.y -= kChestRotaSpeed;
-	if (input_->PushKey(DIK_I))worldTransform_[PartId::Chest].rotation_.y += kChestRotaSpeed;
+	//if (input_->PushKey(DIK_U))worldTransform_[PartId::Chest].rotation_.y -= kChestRotaSpeed;
+	//if (input_->PushKey(DIK_I))worldTransform_[PartId::Chest].rotation_.y += kChestRotaSpeed;
 
 #pragma endregion 上半身回転
 
 #pragma region 下半身回転
 
-	const float kHipRotaSpeed = 0.05f;
+	//const float kHipRotaSpeed = 0.05f;
 
-	if (input_->PushKey(DIK_J))worldTransform_[PartId::Hip].rotation_.y -= kChestRotaSpeed;
-	if (input_->PushKey(DIK_K))worldTransform_[PartId::Hip].rotation_.y += kChestRotaSpeed;
+	//if (input_->PushKey(DIK_J))worldTransform_[PartId::Hip].rotation_.y -= kChestRotaSpeed;
+	//if (input_->PushKey(DIK_K))worldTransform_[PartId::Hip].rotation_.y += kChestRotaSpeed;
 
 #pragma endregion 下半身回転
 
@@ -250,7 +258,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	for (size_t i = 1; i < _countof(worldTransform_); i++)
+	for (size_t i = 0; i < _countof(worldTransform_); i++)
 	{
 		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
 	}
