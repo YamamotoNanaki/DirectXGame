@@ -67,16 +67,9 @@ void GameScene::Initialize() {
 	for (size_t i = 0; i < _countof(worldTransform_); i++)
 	{
 		worldTransform_[i].scale_ = { 1,1,1 };
-		int a = i % 7;
-		int b = i / 7;
-		int c = i / 49;
 
-		if (b >= 7)
-		{
-			b -= 7 * c;
-		}
-
-		worldTransform_[i].translation_ = { (float)a * 5 - 15,(float)b * 5 - 15,(float)c * 10 };
+		worldTransform_[i].translation_ = { cosf((float)i * XM_PI / 5) * 15,
+			sinf((float)i * XM_PI / 5) * 15,0 };
 		worldTransform_[i].Initialize();
 	}
 
@@ -100,6 +93,16 @@ void GameScene::Update()
 	sprite_->SetPosition(position);
 
 	XMFLOAT3 move = { 0,0,0 };
+	rota += 0.5f;
+
+	for (size_t i = 0; i < _countof(worldTransform_); i++)
+	{
+		worldTransform_[i].scale_ = { 1,1,1 };
+
+		worldTransform_[i].translation_ = { cosf(((float)i * XM_PI * 6 + rota) / 30) * 15,
+			sinf(((float)i * XM_PI * 6 + rota) / 30) * 15,0 };
+		worldTransform_[i].UpdateMatrix();
+	}
 
 #pragma region 視点移動
 
