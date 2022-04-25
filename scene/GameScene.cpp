@@ -67,10 +67,16 @@ void GameScene::Initialize() {
 	for (size_t i = 0; i < _countof(worldTransform_); i++)
 	{
 		worldTransform_[i].scale_ = { 1,1,1 };
-		int b = i % 7;
-		int c = i / 7;
+		int a = i % 7;
+		int b = i / 7;
+		int c = i / 49;
 
-		worldTransform_[i].translation_ = { (float)b * 5-15,(float)c * 5-15,0.0f };
+		if (b >= 7)
+		{
+			b -= 7 * c;
+		}
+
+		worldTransform_[i].translation_ = { (float)a * 5 - 15,(float)b * 5 - 15,(float)c * 10 };
 		worldTransform_[i].Initialize();
 	}
 
@@ -254,9 +260,6 @@ void GameScene::Draw() {
 	/// </summary>
 	for (size_t i = 0; i < _countof(worldTransform_); i++)
 	{
-		int a = i % 7;
-		int b = i / 7;
-		if ((a != 1 && a != 3 && a != 5) || (b != 1 && b != 3 && b != 5))
 		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
 	}
 
