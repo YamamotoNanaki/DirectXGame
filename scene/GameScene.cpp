@@ -24,11 +24,16 @@ void GameScene::Initialize() {
 	sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
-
 	random_device seed_gen;
 	mt19937_64 engine(seed_gen());
-	uniform_real_distribution<float>rotDist(0.0f, XM_2PI);
 	uniform_real_distribution<float>posDist(-10.0f, 10.0f);
+	for (int i = 0; i < _countof(angle); i++)
+	{
+		angle[i].x = posDist(seed_gen);
+		angle[i].y = posDist(seed_gen);
+		angle[i].z = posDist(seed_gen);
+	}
+	viewProjection_.eye = angle[0];
 
 	worldTransform_[PartId::Root].Initialize();
 
@@ -93,6 +98,33 @@ void GameScene::Update()
 
 	XMFLOAT3 move = { 0,0,0 };
 
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		switch (flag)
+		{
+		case 0:
+			viewProjection_.eye = angle[1];
+			flag++;
+			break;
+		case 1:
+			viewProjection_.eye = angle[2];
+			flag++;
+			break;
+		case 2:
+			viewProjection_.eye = angle[0];
+			flag = 0;
+			break;
+		}
+	}
+
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("camera1:(%f,%f,%f)", angle[0].x, angle[0].y, angle[0].z);
+	debugText_->SetPos(50, 70);
+	debugText_->Printf("camera2:(%f,%f,%f)", angle[1].x, angle[1].y, angle[1].z);
+	debugText_->SetPos(50, 90);
+	debugText_->Printf("camera3:(%f,%f,%f)", angle[2].x, angle[2].y, angle[2].z);
+
+
 #pragma region 視点移動
 
 	/*const float kEyeSpeed = 0.2f;
@@ -123,10 +155,6 @@ void GameScene::Update()
 	worldTransform_[PartId::Root].translation_.z += move.z;
 
 	viewProjection_.UpdateMatrix();
-
-	debugText_->SetPos(50, 150);
-	debugText_->Printf("target:(%f,%f,%f)", worldTransform_[PartId::Root].translation_.x,
-		worldTransform_[PartId::Root].translation_.y, worldTransform_[PartId::Root].translation_.z);
 
 	for (int i = 0; i < _countof(worldTransform_); i++)
 	{

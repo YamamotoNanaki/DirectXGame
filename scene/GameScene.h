@@ -55,7 +55,10 @@ class GameScene {
 	uint32_t soundDataHandle_ = 0;
 	uint32_t voiceHandle_ = 0;
 	int32_t value_ = 0;
+	DirectX::XMFLOAT3 angle[3];
 	float viewAngle = 0;
+	int flag = 0;
+
 
 	enum PartId
 	{
