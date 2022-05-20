@@ -9,6 +9,9 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "DebugCamera.h"
+#include "AxisIndicator.h"
+#include "PrimitiveDrawer.h"
 
 /// <summary>
 /// ゲームシーン
@@ -50,4 +53,9 @@ class GameScene {
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	uint32_t texH = 0;
+	Model* model = nullptr;
+	WorldTransform world;
+	ViewProjection vp;
+	DebugCamera* dCamera = nullptr;
 };

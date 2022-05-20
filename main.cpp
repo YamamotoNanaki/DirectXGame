@@ -20,7 +20,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow();
+	win->CreateGameWindow("LE2A_24_ヤマモト_ナナキ_AL3");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene->Initialize();
 
 	// メインループ
-	while (true) {
+	while (!input->PushKey(DIK_ESCAPE)) {
 		// メッセージ処理
 		if (win->ProcessMessage()) {
 			break;
